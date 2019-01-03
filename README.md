@@ -1,7 +1,7 @@
 # nv30_microservices
 nv30 microservices repository
 
-## Homework-12: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=master)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+## Homework-12: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=docker-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - Настроена интеграция репозитория nv30_microservices с Travis CI и Slack.
  - Установлен Docker CE v18.09.
