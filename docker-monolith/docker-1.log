@@ -1,0 +1,15 @@
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+nv30/ubuntu-tmp-file        latest              ce0ab32ccc05        59 seconds ago      117MB
+ubuntu                      16.04               b0ef3016420a        5 days ago          117MB
+quay.io/outline/shadowbox   stable              891415d1b6a9        2 weeks ago         166MB
+alpine                      latest              196d12cf6ab1        3 months ago        4.41MB
+hello-world                 latest              4ab4c602aa5e        3 months ago        1.84kB
+telegrammessenger/proxy     latest              8a37a434f358        7 months ago        138MB
+v2tec/watchtower            latest              3069a9fb302a        10 months ago       9.49MB
+
+Отличия контейнера от образа на основе вывода "docker inspect":
+1. У контейнера есть раздел State, где описан его статус. Отсюда вытекает их главное отличие - контейнер это инстанс образа и его можно запустить, в отличии от образа. При запуске контейнера его верхний слой доступен для записи. Образ же представляет из себя immutable сущность.
+2. У контейнера есть набор параметров в разделе HostConfig, где указаны лимиты и прочие параметры контейнера, которые влияют на его запуск и работу.
+3. У контейнера есть набор парметров NetworkSettings, где указаны сетевые настройки, необходимые для запуска и работы контейнера.
+4. У образа есть параметры Architecture, Os, VirtualSize, которые необходимы для создания контейнера из образа.
+5. У образа есть раздел RootFS, где описаны слои образа и указано, что используется "слоеная" структура файловой системы.
