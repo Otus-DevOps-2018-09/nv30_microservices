@@ -1,0 +1,20 @@
+packer/variables.json
+*.tfstate
+*.tfstate.*.backup
+*.tfstate.backup
+*.tfvars
+.terraform/
+*.retry
+gcp_credentials.json
+jdauphant.nginx
+vault.key
+# Vagrant & molecule
+.vagrant/
+*.log
+*.pyc
+.molecule
+.cache
+.pytest_cache
+# Misc
+venv
+.vscode
