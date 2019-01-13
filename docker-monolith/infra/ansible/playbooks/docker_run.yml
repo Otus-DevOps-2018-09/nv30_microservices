@@ -1,0 +1,7 @@
+---
+- name: Pull and run otus-reddit image.
+  hosts: all
+  become: true
+
+  roles:
+    - otus-reddit

@@ -1,0 +1,11 @@
+{
+    "project_id": "docker-219413",
+    "source_image_family": "ubuntu-1604-lts",
+    "machine_type": "f1-micro",
+    "image_description": "docker-monolith image",
+    "disk_size": "10",
+    "disk_type": "pd-standard",
+    "network": "default",
+    "tags": "docker-monolith",
+    "ssh_username": "appuser"
+}
