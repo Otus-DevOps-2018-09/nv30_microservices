@@ -1,6 +1,19 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-13: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=docker-2)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - Создан новый проект в GCP и он выбран по умолчанию в gcloud cli.
+ - Установлен docker-machine и с помощью него создана первая машина с docker в gce.
+ - Повторена практика из лекции, где наглядно показана изоляция процессов, сетей и пользователей.
+ - При запуске контейнера с ключом "--pid host" с хоста видны pid'ы процессов из контейнера. Для общего развития запустил контейнер с ключами "--net=host", "--pid=host" и "--ipc=host".   
+ - В корне репо создана папка docker-monolith и необходимые конфигурационные файлы.
+ - Создан образ reddit с приложением reddit-app. Он запушен в docker-hub и его можно найти по имени "nv30/otus-reddit:1.0".
+ - \*В папке infra созданы конфигурационные файлы для:
+   - Создания образа в gce на базе ubuntu 16.04 с установленным docker ce с помощью packer. В качестве провиженера используется плейбук с коммьюнити ролью "geerlingguy.docker".
+   - Создания инфраструктуры с помощью terraform в gce. Количество создаваемых машин можно указать в переменной "vm_count" в файле terraform.tfvars.
+   - Запуска контейнера на созданных в gce машинах с помощью ansible. Для dynamic inventory используется gcp_compute.
+
 ## Homework-12: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=docker-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - Настроена интеграция репозитория nv30_microservices с Travis CI и Slack.
