@@ -1,0 +1,22 @@
+---
+plugin: gcp_compute
+zones: # Populate inventory with instances in these regions
+  - europe-west1-b
+projects:
+  - docker-219413
+filters:
+scopes:
+  - https://www.googleapis.com/auth/compute
+service_account_file: gcp_credentials.json
+auth_kind: serviceaccount
+keyed_groups:
+  # Create groups from GCE tags
+  - prefix: tag
+    key: tags['items']
+hostnames:
+  # List host by name instead of the default public ip
+  - name
+compose:
+  # Set an inventory parameter to use the Public IP address to connect to the host
+  # For Private ip use "networkInterfaces[0].networkIP"
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP

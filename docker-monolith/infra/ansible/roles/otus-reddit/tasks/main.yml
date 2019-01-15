@@ -1,0 +1,23 @@
+- name: Install pip.
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - python-pip
+  register: task_result
+  until: task_result is success
+  retries: 10
+  delay: 2
+
+- name: Install docker-py.
+  pip:
+    name: docker-py>=1.7.0
+
+- name: Run reddit container from otus-reddit image.
+  docker_container:
+    name: reddit
+    image: nv30/otus-reddit:1.0
+    ports:
+      - "9292:9292"
