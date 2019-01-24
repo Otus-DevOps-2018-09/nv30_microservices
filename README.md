@@ -1,6 +1,19 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-15: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=docker-4)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - Для теста контейнеры запускались с сетевыми драйверами none, host, bridge.
+ - Также контейнеры запущены с драйверами none и host с просмотром списка net-namespace'ов.
+ - Создана bridge-сеть reddit, в ней запущены контейнеры. Чтобы они начали видеть друг друга, прописаны сетевые алиасы при их запуске.
+ - Созданы сети front_net (для ui) и back_net (для mongodb, comment и post). При запуске контейнера docker может подключить к нему только 1 сеть, поэтому контейнеры post и comment подключены к сети front_net командой "docker network connect <network> <container>".
+ - Установлен docker-compose и создан файл docker-compose.yml с описанием запуска наших контейнеров.
+ - Файл docker-compose.yml обновлен для создания сетей front_net и back_net и подключения к ним необходимых контейнеров. Также в файле параметризованы порт публикации сервиса ui, версии всех сервисов и volume для сервиса post_db. Переменные описаны в файле ".env". В git попадет только файл ".env.example".
+ - По умолчанию в качестве имени проекта docker-compose использует имя папки, в который он расположен. Задать имя проекта можно с помощью переменной **COMPOSE_PROJECT_NAME** в файле .env, либо при запуске docker-compose с ключом "-p".
+ - \*Создан docker-compose.override.yml:
+   - Для запуска puma в дебаг режиме с двумя воркерами в сервисах ui и comment, используется директива **command: "puma --debug -w 2"**.
+   - Для возможности изменения кода приложений без сборки образа, выполняется проброс директорий с кодом сервисов с машины docker-host с помощью директивы **volumes**. Поэтому сначала необходимо скопировать директории comment, post-py и ui с локальной машины на docker-host с помощью scp.
+
 ## Homework-14: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=docker-3)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - В репозиторий в каталог src добавлены микросервисы приложения reddit: post-py, comment и ui.
