@@ -1,0 +1,9 @@
+---
+- name: Pull, run and register gitlab-runner.
+  hosts: tag_gitlab_runner
+  become: true
+  vars_files:
+    - ../roles/riemers.gitlab-runner/vars/main.yml
+
+  roles:
+    - riemers.gitlab-runner

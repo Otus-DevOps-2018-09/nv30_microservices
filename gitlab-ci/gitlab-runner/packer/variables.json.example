@@ -1,0 +1,11 @@
+{
+    "project_id": "iddqd",
+    "source_image_family": "ubuntu-1604-lts",
+    "machine_type": "f1-micro",
+    "image_description": "Test image",
+    "disk_size": "10",
+    "disk_type": "pd-standard",
+    "network": "default",
+    "tags": "test",
+    "ssh_username": "test"
+}
