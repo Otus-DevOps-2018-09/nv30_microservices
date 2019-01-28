@@ -1,0 +1,18 @@
+---
+# vars file for gitlab-runner
+gitlab_runner_coordinator_url: 'http://<GITLAB-CI-IP>/'
+gitlab_runner_registration_token: '<GITLAB-CI-REG-TOKEN>'
+gitlab_runner_description: 'Some GitLab Runner'
+gitlab_runner_tags:
+  - linux
+  - xenial
+  - ubuntu
+  - docker
+gitlab_runner_docker_volumes:
+  - " /srv/gitlab-runner/config:/etc/gitlab-runner"
+  - "/var/run/docker.sock:/var/run/docker.sock"
+gitlab_runner_package_name: gitlab-runner
+gitlab_runner_docker_image: alpine:latest
+gitlab_runner_executor: docker
+gitlab_runner_locked: false
+gitlab_runner_extra_options: '--run-untagged=true'

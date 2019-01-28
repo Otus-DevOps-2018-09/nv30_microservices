@@ -1,6 +1,20 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-16: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=gitlab-ci-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - В GCE, используя docker-machine, создана n1-standard-1 машина для Gitlab CI.
+ - На машину установлен Gitlab CI, используя Omnibus-установку.
+ - В Gitlab CI создана группа и принадлежащий ей проект.
+ - Создан CI/CD Pipeline для проекта.
+ - На машине запущен gitlab-runner, используя docker. Он зарегистрирован в качестве раннера в ранее созданном проекте.
+ - В репо добавлено приложение reddit и тест для него. Тест успешно пройден.
+ - \*Для автоматизации развертывания большого количества раннеров используются:
+   - **Packer** для создания образа в gce на базе ubuntu 16.04 с установленным docker ce. В качестве провиженера используется ansible плейбук с коммьюнити ролью "geerlingguy.docker".
+   - **Terraform** для создания инфраструктуры в gce. Количество создаваемых машин можно указать в переменной "vm_count" в файле terraform.tfvars. Машины создаются с тегом "gitlab-runner", чтобы динамический инвентори в Ansible мог их группировать по этому признаку.
+   - **Ansible** для запуска контейнера на созданных в gce машинах. Для развертывания и регистрации раннеров используется коммьюнити роль "riemers.gitlab-runner" с необходимыми переменными, прописанными в файле "./gitlab-ci/gitlab-runner/ansible/vars/runner.yml" (в репо лежит соответствующий example-файл). Для dynamic inventory используется gcp_compute.
+ - \*Оповещения из CI/CD Pipeline интегрированы со [Slack-чатом](https://devops-team-otus.slack.com/messages/CDE04PHLP).
+
 ## Homework-15: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=docker-4)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - Для теста контейнеры запускались с сетевыми драйверами none, host, bridge.
