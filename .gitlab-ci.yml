@@ -34,7 +34,7 @@ test_integration_job:
 deploy_dev_job:
   stage: review
   script:
-    - echo 'Deploy'
+    - echo 'Deploy dev'
   environment:
     name: dev
     url: http://dev.example.com
@@ -45,7 +45,7 @@ staging:
   only:
     - /^\d+\.\d+\.\d+/
   script:
-    - echo 'Deploy'
+    - echo 'Deploy stage'
   environment:
     name: stage
     url: https://beta.example.com
@@ -56,7 +56,7 @@ production:
   only:
     - /^\d+\.\d+\.\d+/
   script:
-    - echo 'Deploy'
+    - echo 'Deploy production'
   environment:
     name: production
     url: https://example.com
