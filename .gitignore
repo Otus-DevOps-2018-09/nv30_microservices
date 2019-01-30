@@ -8,6 +8,8 @@ variables.json
 gcp_credentials.json
 jdauphant.nginx
 geerlingguy.docker
+riemers.gitlab-runner
+runner.yml
 vault.key
 # Vagrant & molecule
 .vagrant/

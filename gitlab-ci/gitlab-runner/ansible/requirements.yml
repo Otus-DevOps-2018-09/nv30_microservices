@@ -1,0 +1,5 @@
+- src: geerlingguy.docker
+  version: 2.5.2
+
+- src: riemers.gitlab-runner
+  version: v1.1.11
