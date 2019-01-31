@@ -57,6 +57,7 @@ branch_review_env:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
     - gitlab-ci/branch_review_env/state/
+    policy: pull
   script: 
     - echo "Create environment $CI_ENVIRONMENT_NAME"
     # Export required files from GitLab CI environment variable
@@ -70,7 +71,6 @@ branch_review_env:
       terraform init -backend=false && terraform apply -auto-approve -state=state/${CI_COMMIT_SHORT_SHA}/terraform.tfstate
       -var "project=${GCP_PROJECT_ID}" -var "instance_name=${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}" -var "commit_sha=${CI_COMMIT_SHORT_SHA}"
     # Deploy app
-    - sleep 30
     - cd ../deploy_app/ansible
     - >
       ANSIBLE_INVENTORY_ENABLED=gcp_compute ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_SSH_RETRIES=5
