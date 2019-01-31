@@ -20,3 +20,5 @@ vault.key
 # Misc
 venv
 .vscode
+test
+.env

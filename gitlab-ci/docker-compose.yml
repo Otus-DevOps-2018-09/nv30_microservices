@@ -4,12 +4,20 @@ web:
   hostname: 'gitlab.example.com'
   environment:
     GITLAB_OMNIBUS_CONFIG: |
-      external_url 'http://34.76.114.32'
+      external_url 'https://34.76.114.32.sslip.io'
+      registry_external_url 'https://34.76.114.32.sslip.io:4567'
+      letsencrypt['enable'] = false
+      nginx['ssl_certificate'] = "/opt/gitlab/embedded/ssl/letsencrypt/fullchain.pem"
+      nginx['ssl_certificate_key'] = "/opt/gitlab/embedded/ssl/letsencrypt/privkey.pem"
+      registry_nginx['ssl_certificate'] = "/opt/gitlab/embedded/ssl/letsencrypt/fullchain.pem"
+      registry_nginx['ssl_certificate_key'] = "/opt/gitlab/embedded/ssl/letsencrypt/privkey.pem"
   ports:
     - '80:80'
     - '443:443'
     - '2222:22'
+    - '4567:4567'
   volumes:
     - '/srv/gitlab/config:/etc/gitlab'
     - '/srv/gitlab/logs:/var/log/gitlab'
     - '/srv/gitlab/data:/var/opt/gitlab'
+    - '/srv/gitlab/letsencrypt:/opt/gitlab/embedded/ssl/letsencrypt'
