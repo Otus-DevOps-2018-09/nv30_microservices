@@ -1,35 +1,136 @@
-image: ruby:2.4.2 
+image: docker:stable
 
 stages:
   - build
   - test
-  - deploy
+  - review
+  - stage
+  - production
 
 variables:
- DATABASE_URL: 'mongodb://mongo/user_posts'
-
-before_script:
- - cd reddit
- - bundle install
+  IMAGE_TAG: ${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}
 
 build_job:
   stage: build
+  before_script:
+    # Login to local gitlab-ci container registry
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - echo 'Building'
+    - echo "Build docker images for comment, ui and post-py services"
+    # Build and pull services images
+    - docker build -t $CI_REGISTRY_IMAGE/src/comment:$IMAGE_TAG src/comment
+    - docker push $CI_REGISTRY_IMAGE/src/comment:$IMAGE_TAG
+    - docker build -t $CI_REGISTRY_IMAGE/src/post-py:$IMAGE_TAG src/post-py
+    - docker push $CI_REGISTRY_IMAGE/src/post-py:$IMAGE_TAG
+    - docker build -t $CI_REGISTRY_IMAGE/src/ui:$IMAGE_TAG src/ui
+    - docker push $CI_REGISTRY_IMAGE/src/ui:$IMAGE_TAG
 
 test_unit_job:
- stage: test
- services:
- - mongo:latest
- script:
- - ruby simpletest.rb
+  stage: test
+  script:
+    - echo 'Testing 1'
+  #before_script:
+  #- cd reddit
+  #- bundle install
+  #services:
+  #- mongo:latest
+  #script:
+  #- ruby simpletest.rb
 
 test_integration_job:
   stage: test
   script:
     - echo 'Testing 2'
 
-deploy_job:
-  stage: deploy
+deploy_dev_job:
+  stage: review
   script:
-    - echo 'Deploy'
+    - echo 'Deploy dev'
+  environment:
+    name: dev
+    url: http://dev.example.com
+
+branch_review_env:
+  stage: review
+  image: nv30/ansiblerraform:0.2
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - gitlab-ci/branch_review_env/state/
+    policy: pull
+  script: 
+    - echo "Create environment $CI_ENVIRONMENT_NAME"
+    # Export required files from GitLab CI environment variable
+    - echo "${GCP_CREDENTIALS_JSON}" | base64 -d > gcp_credentials.json
+    - echo "${USER_PUBLIC_KEY}" | base64 -d > appuser.pub
+    - echo "${USER_PRIVATE_KEY}" | base64 -d > appuser
+    - chmod 600 appuser
+    # Create machine
+    - cd gitlab-ci/branch_review_env
+    - >
+      terraform init -backend=false && terraform apply -auto-approve -state=state/${CI_COMMIT_SHORT_SHA}/terraform.tfstate
+      -var "project=${GCP_PROJECT_ID}" -var "instance_name=${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}" -var "commit_sha=${CI_COMMIT_SHORT_SHA}"
+    # Deploy app
+    - cd ../deploy_app/ansible
+    - >
+      ANSIBLE_INVENTORY_ENABLED=gcp_compute ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_SSH_RETRIES=5
+      ANSIBLE_PRIVATE_KEY_FILE=../../../appuser ansible-playbook -i inventory.gcp.yml -vv
+      --extra-vars="tag_host=tag_gitlab_ci_env_${CI_COMMIT_SHORT_SHA} registry_login=gitlab-ci-token registry_password=${CI_JOB_TOKEN} registry_addr=${CI_REGISTRY} image_name=${CI_REGISTRY_IMAGE} image_tag=${IMAGE_TAG}" deploy.yml
+  environment:
+    name: branch/$CI_COMMIT_REF_NAME
+    url: http://${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}.example.com
+    on_stop: delete_branch_review_env
+  only:
+    - branches
+  except:
+    - master
+
+delete_branch_review_env:
+  stage: review
+  image: nv30/ansiblerraform:0.2
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - gitlab-ci/branch_review_env/state/
+  when: manual
+  script: 
+    - echo "Delete environment $CI_ENVIRONMENT_NAME"
+    # Export required files from GitLab CI environment variable
+    - echo "${GCP_CREDENTIALS_JSON}" | base64 -d > gcp_credentials.json
+    - echo "${USER_PUBLIC_KEY}" | base64 -d > appuser.pub
+    - echo "${USER_PRIVATE_KEY}" | base64 -d > appuser
+    # Delete machine
+    - cd gitlab-ci/branch_review_env
+    - >
+      terraform init -backend=false && terraform destroy -auto-approve -state=state/${CI_COMMIT_SHORT_SHA}/terraform.tfstate
+      -var "project=${GCP_PROJECT_ID}" -var "instance_name=${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}" -var "commit_sha=${CI_COMMIT_SHORT_SHA}"
+  environment:
+    name: branch/$CI_COMMIT_REF_NAME
+    url: http://${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}.example.com
+    action: stop
+  only:
+    - branches
+  except:
+    - master
+
+staging:
+  stage: stage
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
+  script:
+    - echo 'Deploy stage'
+  environment:
+    name: stage
+    url: https://beta.example.com
+
+production:
+  stage: production
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
+  script:
+    - echo 'Deploy production'
+  environment:
+    name: production
+    url: https://example.com

@@ -1,0 +1,38 @@
+version: '3.3'
+services:
+  post_db:
+    image: mongo:${MONGO_VER}
+    volumes:
+      - post_db:/data/db
+    networks:
+      - back_net
+  ui:
+    image: ${IMAGE_NAME}/src/ui:${TAG}
+    ports:
+      - ${HOST_PORT}:9292/tcp
+    networks:
+
+      - front_net
+  post:
+    image: ${IMAGE_NAME}/src/post-py:${TAG}
+    networks:
+      - front_net
+      - back_net
+  comment:
+    image: ${IMAGE_NAME}/src/comment:${TAG}
+    networks:
+      - front_net
+      - back_net
+
+volumes:
+  post_db:
+
+networks:
+  back_net:
+    ipam:
+      config:
+        - subnet: 10.0.2.0/24
+  front_net:
+    ipam:
+      config:
+        - subnet: 10.0.1.0/24

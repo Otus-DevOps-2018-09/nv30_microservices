@@ -1,6 +1,47 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-17: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=gitlab-ci-2)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - В Gitlab CI создан проект example2 и к нему закреплен созданный ранее для проекта example раннер.
+ - В конфигурации Gitlab CI описаны определения dev, stage и production окружений. Для stage и production окружений добавлены ограничения для запуска job'а с их определением (обязательный tag в git формата x.x.x).
+ - Создан job с определением динамического окружения при пуше всех веток кроме master.
+ - \*Для управления инфраструктурой и деплоя сервисов приложения был создан образ **nv30/ansiblerraform** на базе ubuntu:16.04. В нем установлены Terraform, Ansible и необходимые компоненты. Конфиг в файле "./gitlab-ci/ansiblerraform/Dockerfile".
+ - \*Файл для авторизации на GCP и ключи пользователя appuser передаются через переменные окружения в Gitlab CI. Изначально они были зашифрованы, используя base64. Во время выполнения пайплайна они расшифровываются и копируются в соответствующие файлы.
+ - \*При пуше в Gitlab CI создается сервер в GCE с помощью Terraform.
+   - Конфиги Terraform лежат в папке "./gitlab-ci/branch_review_env".
+   - Для сохранения tfstate использую директиву **cache** внутри пайплайна. После отработки Terraform его tfstate падает в папку с именем **${CI_COMMIT_SHORT_SHA}**, чтобы можно было спокойно работать с несколькими пайплайнами параллельно. Также **${CI_COMMIT_SHORT_SHA}** используется в качестве тега для создаваемых в GCE машин.
+ - \*Созданное окружение можно удалить по кнопке delete_branch_review_env в пайплайне.
+ - \**В шаг build добавлена сборка контейнеров с сервисами comment, post и ui, а также их push в локальный Gitlab CI Container Registry.
+   - Docker в раннере не мог сбилдить образы пока не изменил volumes в config.toml раннера:
+```
+  volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
+```
+ - \**Для полноценной работы registry пришлось:
+   - Перевести Gitlab CI на https. Встроенное в Omnibus-установку получение сертификата от Letsencrypt не взлетело, поэтому получил и добавил руками.
+   - Повесить registry на отличный от Gitlab CI порт, чтобы оба сервиса работали по одному адресу.
+   - В итоге в docker-compose.yml для поднятия Gitlab CI были добавлены следующие параметры:
+```
+  web:
+  ...
+  environment:
+    GITLAB_OMNIBUS_CONFIG: |
+      external_url 'https://34.76.114.32.sslip.io'
+      registry_external_url 'https://34.76.114.32.sslip.io:4567'
+      letsencrypt['enable'] = false
+      nginx['ssl_certificate'] = "/opt/gitlab/embedded/ssl/letsencrypt/fullchain.pem"
+      nginx['ssl_certificate_key'] = "/opt/gitlab/embedded/ssl/letsencrypt/privkey.pem"
+      registry_nginx['ssl_certificate'] = "/opt/gitlab/embedded/ssl/letsencrypt/fullchain.pem"
+      registry_nginx['ssl_certificate_key'] = "/opt/gitlab/embedded/ssl/letsencrypt/privkey.pem"
+  ports:
+    ...
+    - '4567:4567'
+  volumes:
+    ...
+    - '/srv/gitlab/letsencrypt:/opt/gitlab/embedded/ssl/letsencrypt'
+```
+ - \**Для деплоя сервисов используется Ansible. Файл .env для docker-compose собирается из темплейта, используя переменные окружения, которые передаются из Gitlab CI в Ansible. Конфиги Ansible и Docker Compose лежат в папке "./gitlab-ci/deploy_app".
+
 ## Homework-16: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=gitlab-ci-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - В GCE, используя docker-machine, создана n1-standard-1 машина для Gitlab CI.

@@ -1,0 +1,27 @@
+- name: Deploy and run app
+  hosts: "{{ tag_host }}"
+  gather_facts: no
+  become: true
+  remote_user: appuser
+
+  tasks:
+    - name: Wait 300 seconds for host, but only start checking after 30 seconds
+      wait_for_connection:
+        delay: 30
+        timeout: 300
+
+    - name: Deploy comment, post and ui services
+      synchronize:
+        src: ../docker-compose/
+        dest: /home/appuser/project
+
+    - name: Add .env file for docker compose
+      template:
+        src: .env.example
+        dest: /home/appuser/project/.env
+
+    - name: Login into Gitlab CI container registry
+      raw: docker login -u "{{ registry_login }}" -p "{{ registry_password }}" "{{ registry_addr }}"
+
+    - name: Start services
+      shell: cd /home/appuser/project && docker-compose up -d
