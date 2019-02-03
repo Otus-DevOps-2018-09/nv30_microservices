@@ -5,29 +5,69 @@ services:
     volumes:
       - ${VOLUME}:/data/db
     networks:
-      - back_net
+      back_net:
+        aliases:
+          - comment_db
+          - post_db
   ui:
-    build: ./ui
     image: ${USERNAME}/ui:${UI_VER}
     ports:
       - ${HOST_PORT}:9292/tcp
     networks:
       - front_net
   post:
-    build: ./post-py
     image: ${USERNAME}/post:${POST_VER}
     networks:
       - front_net
       - back_net
   comment:
-    build: ./comment
     image: ${USERNAME}/comment:${COMMENT_VER}
+    networks:
+      - front_net
+      - back_net
+  prometheus:
+    image: ${USERNAME}/prometheus
+    ports:
+      - '9090:9090'
+    networks:
+      - front_net
+      - back_net
+    volumes:
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=1d'
+  node-exporter:
+    image: prom/node-exporter:v0.15.2
+    networks:
+      - front_net
+      - back_net
+    user: root
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
+  mongodb-exporter:
+    image: ${USERNAME}/percona-mongodb-exporter:${MONGO_EXP_VER}
+    networks:
+      - back_net
+    command:
+      - '-mongodb.uri=mongodb://post_db:27017'
+  cloudprober:
+    image: cloudprober/cloudprober:${CLOUDPROB_VER}
     networks:
       - front_net
       - back_net
 
 volumes:
   post_db:
+  prometheus_data:
+  cloudprober_cfg:
 
 networks:
   back_net:
