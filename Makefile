@@ -11,7 +11,7 @@ build_monitoring: build_prometheus build_mongodb_exporter
 check:
 ifndef USER_NAME
 	@echo Warning: Docker Hub Username isn\'t defined\; continue? [Y/n]
-	@read line; if [ $$line == "n" ]; then echo aborting; exit 1 ; fi
+	@read line; if [ $$line == "n" ]; then echo Define Username in Makefile.vars; exit 1 ; fi
 endif
 
 build_comment:

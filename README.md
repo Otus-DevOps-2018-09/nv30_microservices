@@ -1,6 +1,57 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-18: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=monitoring-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - В GCE, используя docker-machine, создана n1-standard-1 машина для Prometheus. Открыты порты 9090 и 9292.
+ - Prometheus v2.1.0 запущен из официального образа в Docker Hub.
+ - Создан свой образ Prometheus, в который при сборке добавлен файл конфигурации "prometheus.yml".
+ - Пересобраны образы сервисов comment, post-py и ui с поддержкой healthcheck. Переписан docker-compose.yml для поднятия сервисов и Prometheus.
+ - Добавлен Node exporter для сбора информации о работе docker-host.
+ - \*Добавлен **Percona MongoDB Exporter** для сбора информации о MongoDB. Образ с ним собирается из исходников. [Dockerfile](monitoring/percona-mongodb-exporter/Dockerfile).
+ - \*Добавлен **Cloudprober exporter** для мониторинга по прицнипу blackbox. Используется официальный стабильный образ из Hub'а -  cloudprober/cloudprober:v0.10.0. Конфигурация передается через ключ cloudprober_config в метаданных проекта в GCE и выглядит так:
+```
+probe {
+  name: "comment"
+  type: HTTP
+  targets {
+    host_names: "comment"
+  }
+  interval_msec: 6000
+  timeout_msec: 1000
+  http_probe {
+    port: 9292
+  }
+}
+probe {
+  name: "post"
+  type: HTTP
+  targets {
+    host_names: "post"
+  }
+  interval_msec: 4000
+  timeout_msec: 1000
+  http_probe {
+    port: 9292
+  }
+}
+probe {
+  name: "ui"
+  type: HTTP
+  targets {
+    host_names: "ui"
+  }
+  interval_msec: 2000
+  timeout_msec: 1000
+  http_probe {
+    port: 9292
+  }
+}
+```
+ - \*Создан [Makefile](Makefile) для сборки образов и push'а их в Docker Hub. Перед стартом проверяется определена ли переменная USER_NAME. Переменная определяется в файле Makefile.vars, в репо лежит example дял него.
+ - [Docker Hub](https://hub.docker.com/u/nv30)
+
+
 ## Homework-17: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=gitlab-ci-2)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - В Gitlab CI создан проект example2 и к нему закреплен созданный ранее для проекта example раннер.
