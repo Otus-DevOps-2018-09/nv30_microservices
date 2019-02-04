@@ -67,7 +67,6 @@ services:
 volumes:
   post_db:
   prometheus_data:
-  cloudprober_cfg:
 
 networks:
   back_net:
