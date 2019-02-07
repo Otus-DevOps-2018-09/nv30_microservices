@@ -18,6 +18,7 @@ nv30 microservices repository
  - \*Добавлен [Dockerfile](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/monitoring-2/monitoring/telegraf/Dockerfile) для сборки образа telegraf с копированием локального конфига. Запуск telegraf добавлен в docker-compose, job добавлен в конфиг Prometheus. Создан дэшборд на основе дэшборда для cAdvisor от Thibaut Mottet. [Docker_Telegraph.json](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/monitoring-2/monitoring/grafana/dashboards/Docker_Telegraph.json). Метрик много и можно сравнивать с cAdvisor.
   - \*Добавлен алерт на 95-й процентиль времени ответа сервиса ui. Оповещение уходит при превышении порога 0.08 в течении 1 минуты.
   - \*Добавлена интеграция alertmanager с email. Тестовое письмо ушло, используя smtp сервер google со сгенерированным паролем приложения для почты.
+ - [Docker Hub](https://hub.docker.com/u/nv30)
 
 ## Homework-18: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=monitoring-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
