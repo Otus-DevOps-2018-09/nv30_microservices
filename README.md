@@ -1,6 +1,24 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-19: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=monitoring-2)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - Поднятие сервисов для приложения и мониторинга разнесены по разным docker-compose файлам.
+ - Добавлен запуск cAdvisor в docker-compose и job для него в конфиг Prometheus.
+ - Добавлен запуск Grafana в docker-compose для визуализации данных из Prometheus.
+ - Добавлен dashboard для визуализации метрик по Docker'у из cAdvisor авторства Thibaut Mottet.
+ - В конфигурацию Prometheus добавлен job post для сбора метрик из нашего сервиса post.
+ - Создан dashboard с графиками запросов по http к ui сервису и частотой http запросов с кодом возврата 4xx или 5xx.
+ - На dashboard добавлен график 95-го процентиля времени ответа на запрос сервисом ui.
+ - Создан dashboard с графиками для мониторинга бизнес метрик - счетчиками постов и комментариев.
+ - Добавлен [Dockerfile](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/monitoring-2/monitoring/alertmanager/Dockerfile) для сборки образа alertmanager с копированием локального конфига. Запуск alertmanager добавлен в docker-compose, job добавлен в конфиг Prometheus.
+ - В файл [alerts.yml](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/monitoring-2/monitoring/prometheus/alerts.yml) добавлено правило для оповещения о падении инстанса в тестовый канал slack.
+ - \*В [Makefile](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/monitoring-2/Makefile) добавлены сборка и push образов для alertmanager и telegraf.
+ - \*Включена отдача метрик в экспериментальном режиме самим Docker демоном. Добавлен соответствующий job в конфиг Prometheus. Для визуализации выбран [дэшборд от Ciro S. Costa](https://github.com/cirocosta/sample-collect-docker-metrics). [Docker_Daemon.json](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/monitoring-2/monitoring/grafana/dashboards/Docker_Daemon.json). Метрик меньше, чем в cAdvisor и нельзя мониторить "per container".
+ - \*Добавлен [Dockerfile](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/monitoring-2/monitoring/telegraf/Dockerfile) для сборки образа telegraf с копированием локального конфига. Запуск telegraf добавлен в docker-compose, job добавлен в конфиг Prometheus. Создан дэшборд на основе дэшборда для cAdvisor от Thibaut Mottet. [Docker_Telegraph.json](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/monitoring-2/monitoring/grafana/dashboards/Docker_Telegraph.json). Метрик много и можно сравнивать с cAdvisor.
+  - \*Добавлен алерт на 95-й процентиль времени ответа сервиса ui. Оповещение уходит при превышении порога 0.08 в течении 1 минуты.
+  - \*Добавлена интеграция alertmanager с email. Тестовое письмо ушло, используя smtp сервер google со сгенерированным паролем приложения для почты.
+
 ## Homework-18: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=monitoring-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - В GCE, используя docker-machine, создана n1-standard-1 машина для Prometheus. Открыты порты 9090 и 9292.

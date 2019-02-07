@@ -8,3 +8,10 @@ receivers:
 - name: 'slack-notifications'
   slack_configs:
   - channel: '#nikita_gorlov'
+  email_configs:
+  - to: "some.admin.mail@gmail.com"
+    from: "some.mail@gmail.com"
+    smarthost: "smtp.gmail.com:587"
+    auth_username: "some.mail@gmail.com"
+    auth_identity: "some.mail@gmail.com"
+    auth_password: "generated_app_password"

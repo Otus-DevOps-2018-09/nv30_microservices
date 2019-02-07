@@ -5,44 +5,44 @@ global:
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets:
-        - 'localhost:9090'
+      - targets: ['localhost:9090']
 
   - job_name: 'ui'
     static_configs:
-      - targets:
-        - 'ui:9292'
+      - targets: ['ui:9292']
 
   - job_name: 'comment'
     static_configs:
-      - targets:
-        - 'comment:9292'
+      - targets: ['comment:9292']
 
   - job_name: 'node'
     static_configs:
-      - targets:
-        - 'node-exporter:9100' 
+      - targets: ['node-exporter:9100']
 
   - job_name: 'mongodb'
     static_configs:
-      - targets:
-        - 'mongodb-exporter:9216'
+      - targets: ['mongodb-exporter:9216']
 
   - job_name: 'cloudprober'
     scrape_interval: 10s
     static_configs:
-      - targets:
-        - 'cloudprober:9313'
+      - targets: ['cloudprober:9313']
 
   - job_name: 'cadvisor'
     static_configs:
-      - targets:
-        - 'cadvisor:8080'
+      - targets: ['cadvisor:8080']
 
   - job_name: 'post'
     static_configs:
-      - targets:
-        - 'post:5000'
+      - targets: ['post:5000']
+
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['172.17.0.1:9323']
+
+  - job_name: 'telegraf'
+    static_configs:
+      - targets: ['telegraf:9273']
 
 rule_files:
   - "alerts.yml"
@@ -51,5 +51,4 @@ alerting:
   alertmanagers:
   - scheme: http
     static_configs:
-    - targets:
-      - "alertmanager:9093"
+    - targets: ['alertmanager:9093']

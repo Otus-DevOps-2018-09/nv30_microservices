@@ -70,6 +70,14 @@ services:
       - 9093:9093
     networks:
       - back_net
+  telegraf:
+    image: ${USERNAME}/telegraf
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9273:9273
+    networks:
+      - back_net
 
 volumes:
   prometheus_data:
