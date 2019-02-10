@@ -1,0 +1,17 @@
+global:
+  slack_api_url: 'https://hooks.slack.com/services/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'
+
+route:
+  receiver: 'slack-notifications'
+
+receivers:
+- name: 'slack-notifications'
+  slack_configs:
+  - channel: '#nikita_gorlov'
+  email_configs:
+  - to: "some.admin.mail@gmail.com"
+    from: "some.mail@gmail.com"
+    smarthost: "smtp.gmail.com:587"
+    auth_username: "some.mail@gmail.com"
+    auth_identity: "some.mail@gmail.com"
+    auth_password: "generated_app_password"
