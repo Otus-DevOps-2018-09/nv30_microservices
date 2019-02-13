@@ -1,5 +1,13 @@
 version: '3'
 services:
+  zipkin:
+    image: openzipkin/zipkin:${ZIPKIN_VER}
+    networks:
+      - front_net
+      - back_net
+    ports:
+      - "9411:9411"
+
   fluentd:
     image: ${USERNAME}/fluentd:${FLUENTD_VER}
     ports:
@@ -17,3 +25,7 @@ services:
     image: kibana:${KIBANA_VER}
     ports:
       - "5601:5601"
+
+networks:
+  back_net:
+  front_net:

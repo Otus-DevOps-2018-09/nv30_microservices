@@ -4,6 +4,8 @@ services:
     image: mongo:${MONGO_VER}
     volumes:
       - ${VOLUME}:/data/db
+    environment:
+      - ZIPKIN_ENABLED=${ZIPKIN_ENABLED}
     networks:
       back_net:
         aliases:
@@ -13,6 +15,8 @@ services:
     image: ${USERNAME}/ui:${UI_VER}
     ports:
       - ${HOST_PORT}:9292/tcp
+    environment:
+      - ZIPKIN_ENABLED=${ZIPKIN_ENABLED}
     networks:
       - front_net
     logging:
@@ -28,6 +32,7 @@ services:
     environment:
       - POST_DATABASE_HOST=post_db
       - POST_DATABASE=posts
+      - ZIPKIN_ENABLED=${ZIPKIN_ENABLED}
     depends_on:
       - post_db
     ports:
