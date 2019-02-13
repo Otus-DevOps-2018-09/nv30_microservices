@@ -1,6 +1,22 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-20: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=logging-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - Обновлен код микросервисов для добавления логирования. Пересобраны образы с тегом logging.
+ - Создан docker-compose файл для поднятия стека EFK (ElasticSearch, Fluentd, Kibana). Создан файл конфигурации fluent.conf, который добавляется в образ fluentd при сборке.
+ - В docker-compose для сервисов определен драйвер fluentd для логирования сервиса post.
+ - Логи от сервиса post доставлены с помощью fluentd в ElasticSearch и отображаются в Kibana.
+ - В конфиг fluentd добавлен фильтр для парсинга json логов от сервиса post. Теперь лог в Kibana разбит на поля и нормально читаем.
+ - В docker-compose для сервисов определен драйвер fluentd для логирования сервиса ui. От него идут неструктурированные логи.
+ - Логи от ui распарсены с помощью регулярного выражения, которое добавлено в конфиг fluentd. Не очень удобно.
+ - Регулярное выражение заменено на grok-шаблон "RUBY_LOGGER". Он парсит не все данные, поэтому в конфиг fluentd добавлен grok_pattern для парсинга оставшихся нетронутыми данных.
+ - \*Сервис ui шлет логи о запросах к страницам, которые не парсит текущая конфигурация fluentd. По этой причине добавлен дополнительный паттерн:
+ ```
+ pattern service=%{WORD:service} \| event=%{WORD:event} \| path=%{URIPATHPARAM:request} \| request_id=%{GREEDYDATA:request_id} \| remote_addr=%{IP:remote_addr} \| method= %{WORD:method} \| response_status=%{INT:response_status}
+ ```
+  - \*В docker-compose для сервисов логирования добавлен Zipkin, который используется для распределенного трейсинга приложений. Чтобы сервисы собирали данные о запросах, в их описание в конфиге docker-compose добавлена переменная окружения **ZIPKIN_ENABLED**, значение которой задается в .env файле. Далее скачаны исходники с багом, из-за которого страница поста загружается около 3 секунд. С помощью Zipkin можно определить, что проблема возникает при запросе к сервису post и далее уже в нем нужно искать конкретную ошибку.
+
 ## Homework-19: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=monitoring-2)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - Поднятие сервисов для приложения и мониторинга разнесены по разным docker-compose файлам.
