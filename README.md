@@ -1,6 +1,15 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-21: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=kubernetes-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - Созданы deployment манифесты для сервисов mongo, comment, post и ui.
+ - В GCE развернут Kubernetes кластер, используя туториал "Kubernetes The Hard Way".
+ - Созданные во время прохождения туториала файлы лежат в папке [the_hard_way](https://github.com/Otus-DevOps-2018-09/nv30_microservices/tree/kubernetes-1/kubernetes/the_hard_way).
+ - Запущены pod'ы из ранее созданных deployment'ов для сервисов.
+ - \*Создана заготовка для развертывания кластера Kubernetes по туториалу с помощью Ansible. Т.к. по заданию у нас "Proof of Concept", для автоматизации выбрал третий шаг - **03-compute-resources**. Необходимые для авторизации и деплоя в GCE переменные определены в [defaults/main.yml](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/kubernetes-1/kubernetes/ansible/roles/03-compute-resources/defaults/main.yml) роли и зашифрованы с помощью Ansible Vault. Создаются сети, правила fw, 3 контроллера и 3 воркера с необходимыми **pod-cidr** в metadata.
+   - Из проблем - с помощью Ansible нельзя указать конкретные private-ip для создаваемых инстансов, как это сделано в туториале с помощью gcloud cli.
+
 ## Homework-20: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=logging-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - Обновлен код микросервисов для добавления логирования. Пересобраны образы с тегом logging.
