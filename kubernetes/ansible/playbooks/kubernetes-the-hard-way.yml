@@ -1,0 +1,6 @@
+---
+- name: Tutorial "kubernetes-the-hard-way" via Ansible
+  hosts: localhost
+
+  roles:
+    - 03-compute-resources

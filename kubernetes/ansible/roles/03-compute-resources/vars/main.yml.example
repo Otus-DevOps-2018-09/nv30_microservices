@@ -1,0 +1,8 @@
+---
+# vars file example for 03-compute-resources
+region: europe-west1
+zone: europe-west1-b
+project_id: iddqd-123456
+service_email: iddqd@iddqd-123456.iam.gserviceaccount.com
+gce_credentials_json: gcp_credentials.json
+image: ubuntu-1804-bionic-v20190212a

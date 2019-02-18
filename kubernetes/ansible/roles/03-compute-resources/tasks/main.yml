@@ -1,0 +1,103 @@
+---
+# tasks file for 03-compute-resources
+
+- name: Create the kubernetes-the-hard-way custom VPC network
+  gce_net:
+    project_id: "{{ project_id }}"
+    service_account_email: "{{ service_email }}"
+    credentials_file: "{{ gce_credentials_json }}"
+    name: kubernetes-the-hard-way
+    mode: custom
+    subnet_region: "{{ region }}"
+    subnet_name: "kubernetes"
+    ipv4_range: '10.240.0.0/24'
+    state: "present"
+
+- name: Create a firewall rule that allows internal communication across all protocols
+  gce_net:
+    project_id: "{{ project_id }}"
+    service_account_email: "{{ service_email }}"
+    credentials_file: "{{ gce_credentials_json }}"
+    name: kubernetes-the-hard-way
+    fwname: kubernetes-the-hard-way-allow-internal
+    allowed: 'tcp;udp;icmp'
+    src_range: ['10.240.0.0/24', '10.200.0.0/16']
+    state: present
+
+- name: Create a firewall rule that allows external SSH, ICMP, and HTTPS
+  gce_net:
+    project_id: "{{ project_id }}"
+    service_account_email: "{{ service_email }}"
+    credentials_file: "{{ gce_credentials_json }}"
+    name: kubernetes-the-hard-way
+    fwname: "kubernetes-the-hard-way-allow-external"
+    allowed: 'tcp:22,6443;icmp'
+    src_range: ['0.0.0.0/0']
+    state: present
+
+- name: Allocate a static IP address that will be attached to the external load balancer
+  gce_eip:
+    project_id: "{{ project_id }}"
+    service_account_email: "{{ service_email }}"
+    credentials_file: "{{ gce_credentials_json }}"
+    name: kubernetes-the-hard-way
+    region: "{{ region }}"
+    state: present
+
+- name: Create three compute instances which will host the Kubernetes control plane
+  gce:
+    project_id: "{{ project_id }}"
+    service_account_email: "{{ service_email }}"
+    credentials_file: "{{ gce_credentials_json }}"
+    instance_names: controller-0,controller-1,controller-2
+    machine_type: n1-standard-1
+    image: "{{ image }}"
+    disk_size: 200
+    ip_forward: true
+    network: kubernetes-the-hard-way
+    subnetwork: kubernetes
+    zone: "{{ zone }}"
+    external_ip: ephemeral
+    metadata: '{"sshKeys":"appuser:{{ lookup("file", "~/.ssh/appuser.pub") }}"}'
+    service_account_permissions:
+      - compute-rw
+      - storage-ro
+      - service-management
+      - service-control
+      - logging-write
+      - monitoring
+    tags:
+      - kubernetes-the-hard-way
+      - controller
+    state: present
+
+- name: Create three compute instances which will host the Kubernetes worker nodes
+  gce:
+    project_id: "{{ project_id }}"
+    service_account_email: "{{ service_email }}"
+    credentials_file: "{{ gce_credentials_json }}"
+    instance_names: "worker-{{ item }}"
+    machine_type: n1-standard-1
+    image: "{{ image }}"
+    disk_size: 200
+    ip_forward: true
+    network: kubernetes-the-hard-way
+    subnetwork: kubernetes
+    zone: "{{ zone }}"
+    external_ip: ephemeral
+    metadata: '{"sshKeys":"appuser:{{ lookup("file", "~/.ssh/appuser.pub") }}","pod-cidr":"10.200.{{ item }}.0/24"}'
+    service_account_permissions:
+      - compute-rw
+      - storage-ro
+      - service-management
+      - service-control
+      - logging-write
+      - monitoring
+    tags:
+      - kubernetes-the-hard-way
+      - worker
+    state: present
+  loop:
+    - 0
+    - 1
+    - 2
