@@ -97,7 +97,7 @@
       - kubernetes-the-hard-way
       - worker
     state: present
-  with_items:
+  loop:
     - 0
     - 1
     - 2
