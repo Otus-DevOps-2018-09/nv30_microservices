@@ -1,6 +1,19 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-22: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=kubernetes-2)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - С помощью minikube развернут локальный k8s кластер. Автоматически прописана конфигурация для kubectl.
+ - Дописаны деплойменты для сервисов приложения reddit. Добавлены services для связи между сервисами приложения. Появились записи в dns и приложения узнали как взаимодействовать друг с другом.
+ - Добавлены services для связи сервисов comment и ui с mongodb. В описание деплойментов добавлены соответствующие переменные окружения.
+ - Добавлен сервис для доступа к ui извне. Тип сервиса - NodePort.
+ - Включен и проверен dashboard.
+ - Добавлен namespace "dev". В нем развернуто приложение reddit. Также добавлено отображение названия namespace при рендере страницы приложения.
+ - Кластер k8s развернут в GKE. В нем развернуто приложение reddit.
+ - Запущен Dashboard, выданы права сервисному аккаунту и проверена его работа с помощью kubectl proxy.
+ - \*Кластер k8s развернут с помощью [Terraform](https://github.com/Otus-DevOps-2018-09/nv30_microservices/tree/kubernetes-2/kubernetes/terraform). Используется remote backend и создается новый node pool для кластера. Создание кластера и правила в fw описаны в виде модулей.
+ - \*Создан [dashboard-admin.yaml](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/kubernetes-2/kubernetes/reddit/dashboard-admin.yaml) с добавлением необходимых прав сервисному аккаунту для полноценной работы Dashboard.
+
 ## Homework-21: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=kubernetes-1)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - Созданы deployment манифесты для сервисов mongo, comment, post и ui.

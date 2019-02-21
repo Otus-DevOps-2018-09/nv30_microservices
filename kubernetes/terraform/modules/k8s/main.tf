@@ -26,7 +26,7 @@ resource "google_container_cluster" "stage" {
   }
 }
 
-resource "google_container_node_pool" "primary_preemptible_nodes" {
+resource "google_container_node_pool" "stage_nodes" {
   name       = "node-pool-${var.cluster_name}-${var.env}"
   zone       = "${var.zone}"
   cluster    = "${google_container_cluster.stage.name}"
