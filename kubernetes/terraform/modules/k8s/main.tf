@@ -33,7 +33,7 @@ resource "google_container_node_pool" "stage_nodes" {
   node_count = "${var.nodes_count}"
 
   node_config {
-    preemptible  = true
+    preemptible  = false
     machine_type = "${var.nodes_machine_type}"
     disk_size_gb = "${var.nodes_disk_size}"
 
