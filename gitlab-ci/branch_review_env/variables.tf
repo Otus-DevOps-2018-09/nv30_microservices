@@ -34,4 +34,3 @@ variable instance_name {
 variable commit_sha {
   description = "SHA of commit"
 }
-

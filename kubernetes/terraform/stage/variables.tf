@@ -42,6 +42,6 @@ variable nodes_disk_size {
 
 variable source_ranges {
   description = "Allowed IP addresesses"
-  type = "list"
+  type        = "list"
   default     = ["0.0.0.0/0"]
 }

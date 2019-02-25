@@ -15,7 +15,7 @@ resource "google_container_cluster" "stage" {
       disabled = "false"
     }
   }
-  
+
   node_config {
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",

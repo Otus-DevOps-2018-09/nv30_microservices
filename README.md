@@ -1,6 +1,24 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-23: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=kubernetes-3)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - В сервисе ui включен Load Balancer (изменен тип сервиса с NodePort на LoadBalancer) с открытым портом 80 для доступа извне.
+ - Для полноценного управления трафиком на L7 с терминацией SSL создан Ingress и соответствующий Ingress Controller (встроенный в GCS).
+ - Отключен первый созданный LoadBalancer и настроен путь "/*" на втором, при запросе которого трафик балансируется с помощью Ingress.
+ - Создан сертификат tls. Далее он загружен в k8s кластер путем создания secret'а с помощью kubectl. Следом Ingress настроен на прием только https трафика.
+ - \*Создан [k8s манифест](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/kubernetes-3/kubernetes/reddit/secret/secret.yml) с описанием создаваемого выше secret'а. Для добавления сертификата в k8s кластер, необходимо сначала его создать, а потом в зашифрованном в base64 виде передать kubectl. Создание secret'а в кластере происходит по команде:
+```
+sed "s/TLS_CRT/`cat tls.crt|base64 -w0`/g" secret.yml | \
+sed "s/TLS_KEY/`cat tls.key|base64 -w0`/g" | \
+kubectl apply -n dev -f -
+```
+ - Включена поддержка network-policy в GKE. Настроен манифест с сетевыми политиками, разрешающими доступ к сервису mongodb только сервисам comment и post.
+ - Хранилище - тип Volume. Создан диск в GCE. Тип volume в деплойменте mongo заменен на **gcePersistentDisk** с указанием использовать созданный диск (указателем служит имя диска, указанное в **pdName**).
+ - Хранилище - тип PersistentVolume. Создано [описание](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/kubernetes-3/kubernetes/reddit/mongo-volume.yml) PersistentVolume и с помощью него создан диск в GCE. 
+ - Запрос части хранилища - статический. Для выделения части PV приложению создано описание запроса - [PersistentVolumeClaim](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/kubernetes-3/kubernetes/reddit/mongo-claim.yml). Статический PVC подключен к Pod'ам путем изменения описания volume в деплойменте mongo.
+ - Запрос части хранилища - динамический. Создано [описание](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/kubernetes-3/kubernetes/reddit/storage-fast.yml) StorageClass'а и с помощью него StorageClass добавлен в кластер k8s. Создано [описание](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/kubernetes-3/kubernetes/reddit/mongo-claim-dynamic.yml) PVC с использованием StorageClass, вместо PV, как было в случае статического выделения хранилища приложению. Динамический PVC подключен к Pod'ам путем изменения описания volume в деплойменте mongo.
+
 ## Homework-22: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=kubernetes-2)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - С помощью minikube развернут локальный k8s кластер. Автоматически прописана конфигурация для kubectl.
