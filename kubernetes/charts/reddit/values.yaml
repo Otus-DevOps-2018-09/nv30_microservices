@@ -1,0 +1,20 @@
+comment:
+  image:
+    repository: nv30/comment
+    tag: latest
+  service:
+    externalPort: 9292
+
+post:
+  image:
+    repository: nv30/post
+    tag: latest
+    service:
+      externalPort: 5000
+
+ui:
+  image:
+    repository: nv30/ui
+    tag: latest
+    service:
+      externalPort: 9292

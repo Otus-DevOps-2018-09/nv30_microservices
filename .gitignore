@@ -25,3 +25,4 @@ test
 *.vars
 tls.crt
 tls.key
+Gitlab_ci
