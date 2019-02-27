@@ -598,7 +598,7 @@ serverFiles:
           labels:
             severity: page
           annotations:
-            description: 'Kubernetes API server has been down for more than 1 minute'
+            description: 'Kubernetes API server has been down for more than 30 seconds'
             summary: 'Kubernetes API server down'
       - name: k8s-node-state-alert
         rules:
@@ -608,7 +608,7 @@ serverFiles:
           labels:
             severity: page
           annotations:
-            description: 'Kubernetes Node {{ $labels.kubernetes_io_hostname }} from pool {{ $labels.cloud_google_com_gke_nodepool }} has been down for more than 1 minute'
+            description: 'Kubernetes Node {{ $labels.kubernetes_io_hostname }} from pool {{ $labels.cloud_google_com_gke_nodepool }} has been down for more than 30 seconds'
             summary: 'Kubernetes Node {{ $labels.kubernetes_io_hostname }} down'
 
   rules: {}
