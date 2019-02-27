@@ -59,4 +59,3 @@ resource "google_compute_firewall" "firewall_puma" {
   # rules will be applied to this tags
   target_tags = ["docker-machine"]
 }
-

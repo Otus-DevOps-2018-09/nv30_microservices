@@ -23,3 +23,5 @@ venv
 test
 .env
 *.vars
+tls.crt
+tls.key

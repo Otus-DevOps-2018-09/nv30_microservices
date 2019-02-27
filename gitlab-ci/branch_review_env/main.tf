@@ -1,8 +1,8 @@
 provider "google" {
-  version = "1.4.0"
+  version     = "1.4.0"
   credentials = "${file("../../gcp_credentials.json")}"
-  project = "${var.project}"
-  region  = "${var.region}"
+  project     = "${var.project}"
+  region      = "${var.region}"
 }
 
 resource "google_compute_instance" "gitlab-ci-env" {
