@@ -4,7 +4,7 @@ rbac:
 alertmanager:
   ## If false, alertmanager will not be installed
   ##
-  enabled: false
+  enabled: true
 
   # Defines the serviceAccountName to use when `rbac.create=false`
   serviceAccountName: default
@@ -17,7 +17,7 @@ alertmanager:
   ##
   image:
     repository: prom/alertmanager
-    tag: v0.10.0
+    tag: v0.16.1
     pullPolicy: IfNotPresent
 
   ## Additional alertmanager container arguments
@@ -571,24 +571,46 @@ pushgateway:
 alertmanagerFiles:
   alertmanager.yml: |-
     global:
-      # slack_api_url: ''
+      slack_api_url: 'https://hooks.slack.com/services/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'
 
     receivers:
-      - name: default-receiver
-        # slack_configs:
-        #  - channel: '@you'
-        #    send_resolved: true
+      - name: 'slack-notifications'
+        slack_configs:
+         - channel: '#nikita_gorlov'
+           send_resolved: true
 
     route:
       group_wait: 10s
-      group_interval: 5m
-      receiver: default-receiver
-      repeat_interval: 3h
+      group_interval: 1m
+      receiver: 'slack-notifications'
+      repeat_interval: 30m
 
 ## Prometheus server ConfigMap entries
 ##
 serverFiles:
-  alerts: {}
+  alerts:
+    groups:
+      - name: k8s-api-server-state-alert
+        rules:
+        - alert: k8s-api-server-down
+          expr: up{job="kubernetes-apiservers"} == 0
+          for: 30s
+          labels:
+            severity: page
+          annotations:
+            description: 'Kubernetes API server has been down for more than 1 minute'
+            summary: 'Kubernetes API server down'
+      - name: k8s-node-state-alert
+        rules:
+        - alert: k8s-node-down
+          expr: up{job="kubernetes-nodes"} == 0
+          for: 30s
+          labels:
+            severity: page
+          annotations:
+            description: 'Kubernetes Node {{ $labels.kubernetes_io_hostname }} from pool {{ $labels.cloud_google_com_gke_nodepool }} has been down for more than 1 minute'
+            summary: 'Kubernetes Node {{ $labels.kubernetes_io_hostname }} down'
+
   rules: {}
 
   prometheus.yml:
