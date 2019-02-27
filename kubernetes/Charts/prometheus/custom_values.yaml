@@ -17,7 +17,7 @@ alertmanager:
   ##
   image:
     repository: prom/alertmanager
-    tag: v0.16.1
+    tag: v0.15.3
     pullPolicy: IfNotPresent
 
   ## Additional alertmanager container arguments
