@@ -1,0 +1,8 @@
+---
+name: efk
+version: 0.1.1
+description: OTUS efk stack
+maintainers:
+  - name: Nikita Gorlov
+    email: my@mail.com
+appVersion: 0.1.1

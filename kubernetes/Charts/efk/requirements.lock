@@ -1,0 +1,6 @@
+dependencies:
+- name: kibana
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 0.1.1
+digest: sha256:bdde680cddd6bfa95dd5707e73eab060667b1b7d9b26d2f8da6128307bbb8f53
+generated: 2019-02-28T20:48:36.44628858+03:00
