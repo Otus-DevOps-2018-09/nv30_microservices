@@ -1,6 +1,23 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-24: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=kubernetes-4)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - На локальную машину установлен Helm, в кластер k8s установлен Tiller. Версии 2.12.3.
+ - Создан манифест для добавления сервисного аккаунта tiller в кластер.
+ - Созданы Chart'ы для деплоя в k8s кластер сервисов ui, comment и post. Chart'ы шаблонизированы с помощью темплейтов.
+ - В созданные Chart'ы добавлены helper'ы для генерации шаблона **{{ .Release.Name }}-{{ .Chart.Name }}**. В самих темплейтах сервисов шаблон заменен на вызов функции **{{ template "comment.fullname" . }}** из helper'а.
+ - Для полноценного деплоя приложения reddit создан общий Chart, где в файле requirements.yaml описаны необходимые для деплоя приложения зависимости.
+ - В Chart сервиса ui добавлено описание переменных окружения POST_SERVICE_HOST, POST_SERVICE_PORT, COMMENT_SERVICE_HOST и COMMENT_SERVICE_PORT для того, чтобы он мог связаться с сервисами comment и post.
+ - Gitlab CI установлен в кластер k8s с помощью Helm.
+ - В Gitlab CI создана группа и проекты comment, post, ui и reddit-deploy. Проекты comment, post и ui созданы на основе соответствующих Chart'ов. Проект reddit-deploy создан на базе исходников сервисов.
+ - Для проектов comment, post и ui настроен Pipeline на сборку образов, тест и релиз приложения при коммите в ветку master. При коммите в другие бранчи создается соответствующее окружение с возможностью удаления по кнопке.
+ - В проекте reddit-deploy настроен Pipeline для деплоя релизов приложений в окружение staging и по кнопке в окружение production. Pipeline не собирает образы Docker и использует только окружения staging и production.
+ - \*В проектах comment, post и ui добавлена стадия [**master_deploy**](https://github.com/Otus-DevOps-2018-09/nv30_microservices/blob/a1582f29fd80ddfa1b53a211549af863c24ae6fd/src/comment/.gitlab-ci.yml#L82) в Pipeline. В проекте reddit-deploy в настройках CI/CD добавлен триггер и токен для его активации. Значение токена присвоено переменной **$CI_MASTER_DEPLOY_TOKEN** в настройках группы, которой принадлежат проекты. При сборке приложения из ветки master в этой стадии устанавливается curl и по API дергается Pipeline проекта reddit-deploy для выкатки приложения в staging/production:
+```
+ curl -X POST -F token=$CI_MASTER_DEPLOY_TOKEN -F ref=master http://gitlab-gitlab/api/v4/projects/5/trigger/pipeline
+```
+
 ## Homework-23: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=kubernetes-3)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - В сервисе ui включен Load Balancer (изменен тип сервиса с NodePort на LoadBalancer) с открытым портом 80 для доступа извне.
