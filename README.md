@@ -1,6 +1,24 @@
 # nv30_microservices
 nv30 microservices repository
 
+## Homework-25: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=kubernetes-5)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
+
+ - Развёрнут дополнительный пул с более мощными нодами.
+ - Установлен ingress-контроллер nginx.
+ - Из Helm чарта установлен Prometheus c использованием кастомных переменных.
+ - Включены kube-state-metrics и node-exporter.
+ - Настроен service discovery по меткам.
+ - Включен relabeling для трансляции метрик k8s в метки prometheus.
+ - Настроены отдельные job'ы с эндпоинтами каждой компоненты приложения.
+ - Из Helm чарта установлена Grafana.
+ - Добавлен дашборд "Kubernetes cluster monitoring (via Prometheus)" и ранее созданные дашборды из предыдущих ДЗ.
+ - Сделан templating ранее созданных дашбордов с добавлением возможности выбора окружения.
+ - \*Запущен alertmanager и настроена отправка оповещений о падении api сервер и нод.
+ - \*По мануалу созданы [манифесты](https://github.com/Otus-DevOps-2018-09/nv30_microservices/tree/kubernetes-5/kubernetes/prometheus-operator) для разворачивания в k8s кластере prometheus-operator. Настроен мониторинг post endpoints.
+ - Двум мощным нодам из кластера добавлен лейбл elastichost=true.
+ - Созданы манифесты для разворачивания EFK стека в k8s кластере и проверена его работа.
+ - \*Создан [Helm чарт](https://github.com/Otus-DevOps-2018-09/nv30_microservices/tree/kubernetes-5/kubernetes/Charts/efk) для установки стека EFK.
+
 ## Homework-24: [![Build Status](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices.svg?branch=kubernetes-4)](https://travis-ci.com/Otus-DevOps-2018-09/nv30_microservices)
 
  - На локальную машину установлен Helm, в кластер k8s установлен Tiller. Версии 2.12.3.
