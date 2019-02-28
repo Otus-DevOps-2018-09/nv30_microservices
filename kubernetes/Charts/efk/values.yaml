@@ -1,0 +1,11 @@
+---
+kibana:
+  image:
+    repository: "kibana"
+    tag: "6.6.0"
+  ingress:
+    enabled: true
+    hosts: {reddit-kibana}
+  env:
+    SERVER_PORT: 5601
+    ELASTICSEARCH_URL: http://elasticsearch-logging:9200
